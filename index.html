@@ -2,25 +2,26 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080610">
 <title>Последний Фонарь — спуск в Бездну</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <canvas id="game" aria-label="Игровое поле The Last Lantern"></canvas>
-<!-- Отдельная мобильная композиция. ПК-Canvas остаётся источником графики игрового мира. -->
+<!-- Independent mobile world renderer, HUD and touch menus. -->
 <div id="mobile-controls" class="mobile-controls" hidden>
   <section id="mobile-play-ui" class="mobile-play-ui" aria-label="Мобильная игра">
     <header id="mobile-status" class="mobile-status" aria-label="Показатели героя"></header>
+    <div id="mobile-run-info" class="mobile-run-info"></div>
     <div class="mobile-layout">
       <aside class="mobile-rail mobile-rail-left" aria-label="Передвижение">
         <div class="mobile-stick" id="mobile-stick" role="group" aria-label="Джойстик движения">
           <span class="stick-cross">✣</span><span class="stick-knob" id="mobile-stick-knob"></span>
         </div>
-        <span class="rail-caption">ДВИЖЕНИЕ</span>
+        <span class="rail-caption">ДВИЖЕНИЕ</span><button id="mobile-map-button" type="button">КАРТА</button>
       </aside>
-      <div class="mobile-arena"><canvas id="mobile-view" aria-label="Игровой мир"></canvas></div>
+      <div class="mobile-arena"><canvas id="mobile-view" aria-label="Игровой мир"></canvas><div id="mobile-notice" role="status" class="mobile-notice"></div><div id="mobile-boss" class="mobile-boss"></div></div>
       <aside class="mobile-rail mobile-rail-right" aria-label="Действия">
         <div class="mobile-action-grid">
           <button id="mobile-attack" class="touch-button touch-attack" type="button" aria-label="Атака и прицеливание"><span class="attack-knob" id="mobile-attack-knob">⚔</span><small>АТАКА</small></button>
@@ -64,6 +65,7 @@
 <script src="js/ui.js"></script>
 <script src="js/ui2.js"></script>
 <script src="js/i18n_en.js"></script>
+<script src="js/mobile_camera.js"></script>
 <script src="js/mobile.js"></script>
 <script src="js/main.js"></script>
 </body>

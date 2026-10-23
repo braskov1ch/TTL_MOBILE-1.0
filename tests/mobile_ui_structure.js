@@ -10,7 +10,8 @@ for(const id of ['mobile-view','mobile-menu-content','mobile-status','mobile-sti
   assert(ids.includes(id),'Missing mobile element '+id);
 assert(css.includes('.mobile-layout')&&css.includes('.mobile-arena'),'Missing independent mobile layout');
 assert(css.includes('body.mobile-mode #game'),'Desktop canvas should be hidden on mobile');
-assert(js.includes('surface.drawImage(cvs')&&js.includes('sourceRect'),'Missing player-following camera');
+assert(js.includes('renderGame(true)')&&!js.includes('surface.drawImage(cvs'),'Mobile must render the world directly');
+assert(js.includes('camera.update')&&js.includes('sourceRect'),'Missing adaptive camera');
 assert(js.includes('HERO_ORDER.map')&&js.includes('SETTINGS_ROWS.map'),'Missing mobile camp/settings');
 for(const [,script] of html.matchAll(/<script src="([^"]+\.js)"/g)){
  const code=fs.readFileSync(path.join(root,script),'utf8');

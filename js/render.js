@@ -1250,7 +1250,7 @@ function drawReticle() {
   ctx.restore();
 }
 
-function renderGame() {
+function renderGame(worldOnly = false) {
   const rm = curRoom;
   ctx.save();
   if (shake > 0 && cfg().shake > 0) ctx.translate((Math.random() - 0.5) * shake * cfg().shake, (Math.random() - 0.5) * shake * cfg().shake);
@@ -1302,5 +1302,5 @@ function renderGame() {
   }
   ctx.restore();
   drawReticle();
-  renderHUD();
+  if (!worldOnly) renderHUD();
 }

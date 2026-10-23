@@ -1,16 +1,20 @@
 {
   "name": "last-lantern",
   "version": "2.0.0",
-  "description": "The Last Lantern — Mobile Edition",
+  "description": "The Last Lantern \u2014 Mobile Edition",
   "private": true,
   "scripts": {
-    "test": "node tests/run.js all",
+    "test": "node tests/run.js all && node tests/mobile_ui_structure.js && node tests/camera.js",
     "test:smoke": "node tests/run.js smoke",
     "test:mechanics": "node tests/run.js mechanics",
     "test:v2": "node tests/run.js v2",
     "test:i18n": "node tests/run.js i18n",
     "test:mobile": "node tests/run.js mobile",
     "test:assets": "node tests/run.js assets",
-    "balance": "node tests/run.js balance"
+    "balance": "node tests/run.js balance",
+    "test:browser": "node tests/browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
   }
 }

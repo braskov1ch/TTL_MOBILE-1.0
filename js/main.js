@@ -6,6 +6,10 @@ let lastTime = 0;
 let errorShown = 0;
 
 function renderFrame() {
+  if (mobileInput.active && typeof updateMobileUI === 'function') {
+    updateMobileUI();
+    return;
+  }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalAlpha = 1;
   switch (state) {

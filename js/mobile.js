@@ -14,7 +14,8 @@
   let stickPointer = null, attackPointer = null, viewPointer = null;
   let lastMode = '', lastMenuSignature = '', lastStatus = '', lastBuildAt = 0;
   let sourceRect = {x:0,y:HUD_H,w:W,h:H-HUD_H};
-  let pageFocus = '';
+  let mapOpen = false;
+  const camera = new MobileCamera();
   mobileInput.active = true;
   host.hidden = false;
   fitCanvas();
@@ -25,14 +26,14 @@
   const txt = value => esc(tr(String(value === undefined ? '' : value)));
   function add(label, fn, opts={}) {
     const id = actions.push(fn)-1;
-    return `<button type="button" data-mobile-action="${id}" class="${opts.primary?'mobile-primary':opts.tab?'mobile-tab':opts.step?'mobile-step':'mobile-card'}${opts.selected?' selected':''}" ${opts.disabled?'disabled':''}>${opts.card?`<b>${txt(label)}</b>${opts.desc?`<small>${txt(opts.desc)}</small>`:''}`:txt(label)}</button>`;
+    return `<button type="button" data-mobile-action="${id}" class="${opts.primary?'mobile-primary':opts.tab?'mobile-tab':opts.step?'mobile-step':'mobile-card'}${opts.selected?' selected':''}" ${opts.disabled?'disabled':''}>${opts.hero?`<canvas class="mobile-hero-portrait" data-hero="${esc(opts.hero)}" width="96" height="96" aria-hidden="true"></canvas>`:''}${opts.card?`<b>${txt(label)}</b>${opts.desc?`<small>${txt(opts.desc)}</small>`:''}`:txt(label)}</button>`;
   }
   const section=(heading,body)=>`<h2 class="mobile-section-title">${txt(heading)}</h2>${body}`;
   const cards=(list,cls='')=>`<div class="mobile-cards ${cls}">${list.join('')}</div>`;
   const info=content=>`<div class="mobile-info-panel">${tr(content)}</div>`;
   function back() {
     if (state === 'story') storyFinish();
-    else if (state === 'pause') handleKey('Escape');
+    else if (state === 'pause') {mapOpen=false;handleKey('Escape');}
     else if (state === 'event' || state === 'hatter') return;
     else if (state === 'camp' || state === 'title') state = 'title';
     else { Save.store(); state = 'title'; }
@@ -60,9 +61,9 @@
   });
 
   function resetStick(){stickPointer=null;mobileInput.moveX=mobileInput.moveY=0;stick.classList.remove('is-held');stickKnob.style.transform='translate(-50%,-50%)';}
-  function resetAttack(){attackPointer=null;mobileInput.attack=mobileInput.aiming=false;attackKnob.style.transform='translate(0px,0px)';attack.classList.remove('is-held');}
-  function resetAll(){resetStick();resetAttack();mobileInput.skill=false;mouse.down=false;viewPointer=null;for(const b of activeActions.values())b.classList.remove('is-held');activeActions.clear();}
-  function begin(e){if(e.pointerType==='mouse'&&e.button!==0)return false;e.preventDefault();Snd.unlock();mobileInput.lastTouch=Date.now();return true;}
+  function resetAttack(){attackPointer=null;mobileInput.attack=mobileInput.aiming=false;if(viewPointer===null)mouse.active=false;attackKnob.style.transform='translate(0px,0px)';attack.classList.remove('is-held');}
+  function resetAll(){resetStick();resetAttack();mobileInput.skill=false;mouse.down=false;mouse.active=false;mouse.right=false;viewPointer=null;for(const b of activeActions.values())b.classList.remove('is-held');activeActions.clear();}
+  function begin(e){if(state!=='play')return false;if(e.pointerType==='mouse'&&e.button!==0)return false;e.preventDefault();Snd.unlock();mobileInput.lastTouch=Date.now();return true;}
   function dragStick(e){
     if(e.pointerId!==stickPointer)return;
     const r=stick.getBoundingClientRect(),radius=r.width*.35;
@@ -88,7 +89,7 @@
   for(const type of ['pointerup','pointercancel','lostpointercapture']) attack.addEventListener(type,e=>{if(e.pointerId===attackPointer)resetAttack();});
   function bindInstant(el,fn,release){
     el.addEventListener('pointerdown',e=>{
-      if(activeActions.has(e.pointerId)||!begin(e))return;
+      if(activeActions.has(e.pointerId)||[...activeActions.values()].includes(el)||!begin(e))return;
       activeActions.set(e.pointerId,el);el.setPointerCapture(e.pointerId);el.classList.add('is-held');fn();
     });
     for(const type of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(type,e=>{
@@ -102,6 +103,7 @@
   bindInstant($('mobile-potion'),()=>{if(state==='play')drinkPotion();});
   bindInstant($('mobile-flask'),()=>{if(state==='play')throwFlask();});
   bindInstant($('mobile-active'),()=>{if(state==='play')useActive();});
+  $('mobile-map-button').addEventListener('click',()=>{if(state==='play'){mapOpen=true;state='pause';resetAll();}});
   bindInstant($('mobile-pause'),()=>{if(state==='play')handleKey('Escape');});
 
   // The gameplay viewport uses a player-following camera. Finger location is
@@ -119,35 +121,73 @@
   status.addEventListener('click',e=>{if(e.target.id==='mobile-pause-top' && state==='play'){Snd.unlock();handleKey('Escape');}});
   function syncStatus(){
     if(!player)return;
-    const hp=Math.ceil(player.hp),max=player.maxHp,oil=Math.round(player.oil);
-    const label=`${hp}/${max}/${oil}/${player.potions}/${player.flasks}/${player.dashCharges}/${floorNum}`;
-    if(label===lastStatus)return;
-    lastStatus=label;
-    const bar=(v,max,cl)=>`<span class="mobile-meter-track"><span class="mobile-meter-fill ${cl}" style="display:block;width:${Math.max(0,Math.min(100,100*v/(max||1)))}%"></span></span>`;
-    status.innerHTML=`<div class="mobile-meter"><span class="mobile-meter-label">♥ ${hp}/${max}</span>${bar(Math.max(0,player.hp),max,'')}</div>`+
-      `<div class="mobile-meter"><span class="mobile-meter-label">♨ ${oil}%</span>${bar(Math.max(0,player.oil),player.oilMax,'oil')}</div>`+
-      `<span class="mobile-counter">✚ ${player.potions}</span><span class="mobile-counter">⌁ ${player.flasks}</span><span class="mobile-counter">ГЛ. ${floorNum} · ➤ ${player.dashCharges}</span><button id="mobile-pause-top" type="button" aria-label="Пауза">Ⅱ</button>`;
+    const p=player, hp=Math.ceil(p.hp), oil=Math.round(100*p.oil/p.oilMax);
+    const label=[hp,p.maxHp,oil,Math.ceil(p.ward),floorNum].join('/');
+    if(label!==lastStatus){
+      lastStatus=label;
+      const meter=(name,v,max,kind)=>`<div class="mobile-meter"><span class="mobile-meter-label">${name}</span><span class="mobile-meter-track"><span class="mobile-meter-fill ${kind}" style="display:block;width:${clamp(100*v/(max||1),0,100)}%"></span></span></div>`;
+      status.innerHTML=meter(`♥ ${hp}/${p.maxHp}`,p.hp,p.maxHp,'')+meter(`♨ ${oil}%`,p.oil,p.oilMax,'oil')+`<span class="mobile-counter">◇ ${Math.ceil(p.ward)}</span><button id="mobile-pause-top" type="button" aria-label="Пауза">Ⅱ</button>`;
+    }
+    $('mobile-run-info').textContent=`${run.mode==='survival'?'Волна '+run.wave:'Глубина '+floorNum+'/'+MAX_FLOOR} · ${fmtTime(run.time)} · Ключи ${p.keys} · Серебро ${p.silver}`;
+    const h=HEROES[p.hero], cd=h.skill==='guard'?p.guard.cd:p.skillCd;
+    const button=(id,label,unavailable)=>{const el=$(id);el.querySelector('small').textContent=label;el.classList.toggle('unavailable',!!unavailable);el.setAttribute('aria-disabled',String(!!unavailable));};
+    button('mobile-skill',cd>0?cd.toFixed(1)+' с':'ГОТОВО',cd>0);
+    button('mobile-dash',p.dashCharges?'×'+p.dashCharges:Math.max(0,p.dashCd-p.dashTimer).toFixed(1)+' с',!p.dashCharges);
+    button('mobile-potion','×'+p.potions,!p.potions||p.potionCd>0);
+    button('mobile-flask','×'+p.flasks,!p.flasks);
+    button('mobile-active',p.active?`${p.charge}/${p.active.active.max}`:'—',!p.active||p.charge<p.active.active.max);
+    const boss=curRoom.enemies.find(e=>e.isBoss&&!e.dead);
+    const bossEl=$('mobile-boss');bossEl.hidden=!boss;
+    if(boss)bossEl.innerHTML=`<span>${txt(boss.name)} · ${Math.ceil(boss.hp)}</span><progress max="${boss.maxHp}" value="${Math.max(0,boss.hp)}"></progress>`;
+    const notices=[];
+    if(banner)notices.push(tr(banner.text));
+    if(floatText)notices.push(tr(floatText.title)+' — '+tr(floatText.desc));
+    if(message)notices.push(tr(message.text));
+    if(toasts.length){const t=toasts[toasts.length-1];notices.push([t.title,t.text,t.sub].filter(Boolean).map(tr).join(' · '));}
+    const notice=$('mobile-notice'), text=notices.join(' • ');
+    if(notice.textContent!==text)notice.textContent=text;
+    notice.hidden=!text;
   }
   function presentWorld(){
     const r=view.getBoundingClientRect();
     if(r.width<1||r.height<1)return;
     const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
-    const width=Math.max(1,Math.round(r.width*dpr)),height=Math.max(1,Math.round(r.height*dpr));
+    const width=Math.round(r.width*dpr),height=Math.round(r.height*dpr);
     if(view.width!==width||view.height!==height){view.width=width;view.height=height;}
-    const ratio=r.width/r.height;
-    // Landscape: wide view of the whole arena. Portrait: tighter camera following player.
-    let sh=Math.min(H-HUD_H,ratio<1?470:510),sw=sh*ratio;
-    if(sw>W){sw=W;sh=sw/ratio;}
-    if(sh>H-HUD_H){sh=H-HUD_H;sw=sh*ratio;}
-    const px=player?player.x:CX,py=player?player.y:CY;
-    const sx=Math.max(0,Math.min(W-sw,px-sw/2));
-    const sy=Math.max(HUD_H,Math.min(H-sh,py-sh/2));
-    sourceRect={x:sx,y:sy,w:sw,h:sh};
+    sourceRect=camera.update(r.width,r.height,player,curRoom,time);
     surface.setTransform(1,0,0,1,0,0);
-    surface.imageSmoothingEnabled=true;
-    surface.clearRect(0,0,width,height);
-    surface.drawImage(cvs,sx,sy,sw,sh,0,0,width,height);
+    surface.fillStyle='#080610';surface.fillRect(0,0,width,height);
+    const previous=ctx;
+    surface.save();
+    try {
+      ctx=surface;
+      surface.scale(width/sourceRect.w,height/sourceRect.h);
+      surface.translate(-sourceRect.x,-sourceRect.y);
+      renderGame(true);
+      // Off-screen threats retain direction cues in the world viewport.
+      const pad=20*sourceRect.w/r.width;
+      for(const e of curRoom.enemies){
+        if(e.dead||e.hidden||e.phased||e.spawnT>0)continue;
+        if(e.x>=sourceRect.x&&e.x<=sourceRect.x+sourceRect.w&&e.y>=sourceRect.y&&e.y<=sourceRect.y+sourceRect.h)continue;
+        const x=clamp(e.x,sourceRect.x+pad,sourceRect.x+sourceRect.w-pad),y=clamp(e.y,sourceRect.y+pad,sourceRect.y+sourceRect.h-pad);
+        ctx.save();ctx.translate(x,y);ctx.rotate(Math.atan2(e.y-y,e.x-x));ctx.fillStyle='#ff7f78';ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-5,-5);ctx.lineTo(-5,5);ctx.closePath();ctx.fill();ctx.restore();
+      }
+    } finally {surface.restore();ctx=previous;}
     syncStatus();
+  }
+  function renderMenuGraphics(){
+    for(const portrait of menuContent.querySelectorAll('.mobile-hero-portrait')){const previous=ctx;try{ctx=portrait.getContext('2d');ctx.clearRect(0,0,96,96);drawHeroPortrait(portrait.dataset.hero,48,53,1.6,true);}finally{ctx=previous;}}
+    const map=$('mobile-map');
+    if(map&&curRoom){const previous=ctx;try{ctx=map.getContext('2d');ctx.clearRect(0,0,map.width,map.height);renderMinimap(0,0,map.width,map.height,22,1);}finally{ctx=previous;}}
+    const table=$('mobile-hat-table'),S=Hat.s;
+    if(!table||!S)return;
+    const previous=ctx;
+    try{ctx=table.getContext('2d');ctx.clearRect(0,0,360,150);
+      for(const ht of S.hats){const x=180+(ht.x-CX)*1.05,y=90+(ht.y-(CY+30))*.5;
+        if(ht.id===S.ballHat&&(S.phase==='show'||S.phase==='reveal')){ctx.fillStyle='#ff5555';ctx.beginPath();ctx.arc(x,y+20,9,0,Math.PI*2);ctx.fill();}
+        drawTopHat(x,y,ht.lift,S.phase==='reveal'&&ht.id===S.picked);
+      }
+    }finally{ctx=previous;}
   }
 
   function composeMenu(){
@@ -156,11 +196,12 @@
     switch(state){
       case 'title':
         heading='ПОСЛЕДНИЙ ФОНАРЬ';
-        html=`<div class="mobile-tagline">СПУСК В БЕЗДНУ</div>`+
+        html=`<div class="mobile-title-art"><span>✦</span><strong>СОХРАНИ СВЕТ.</strong><small>Спуск в Бездну</small></div>`+
           info(`Спусков: <b>${d.runs}</b> · Побед: <b>${d.wins}</b> · Углей: <b>${d.embers}</b> · Монет: <b>${d.coins}</b>`)+
           section('В путь',cards(MENU_ITEMS.filter(x=>x.col===0).map(x=>add(x.label,()=>x.act(),{card:true}))))+
           section('Летопись',cards(MENU_ITEMS.filter(x=>x.col===1).map(x=>add(x.label,()=>x.act(),{card:true})),'compact'))+
           section('Игра',cards(MENU_ITEMS.filter(x=>x.col===2).map(x=>add(x.label,()=>x.act(),{card:true})),'compact'))+
+          add('НА ВЕСЬ ЭКРАН',async()=>{try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();}catch(e){/* Browser can reject fullscreen; normal layout remains usable. */}})+
           add(LANG==='ru'?'Language: Русский → English':'Language: English → Русский',toggleLang);
         break;
       case 'camp': {
@@ -171,7 +212,7 @@
           html+=cards(HERO_ORDER.map((id,i)=>{
             const h=HEROES[id],st=heroCardStatus(id),hide=h.secret&&!st.owned;
             const desc=hide?'Секретный герой':st.owned?`${h.title} · ${h.maxHp} HP · ${h.dmg} урона`:st.cond?`${st.text} · ${st.a}/${st.b}`:`Открыть: ${st.cost} углей`;
-            return add(hide?'???':h.name,()=>buyHero(i),{card:true,desc,selected:selHero===i});
+            return add(hide?'???':h.name,()=>buyHero(i),{card:true,desc,selected:selHero===i,hero:hide?'':id});
           }), 'compact');
           const chosen=HEROES[HERO_ORDER[selHero]];
           html+=info(`<b>${txt(chosen.secret&&!d.heroes[chosen.id]?'Неизвестный':chosen.name)}</b><div class="mobile-note">${chosen.secret&&!d.heroes[chosen.id]?'Открой тайного героя, выполнив условие.':txt(chosen.desc)}</div>`);
@@ -194,9 +235,10 @@
           add('−',()=>{r.step(-1);Save.store();},{step:true})+add('+',()=>{r.step(1);Save.store();},{step:true})+'</div>').join('');
         break;
       case 'pause':
-        heading='ПАУЗА';
+        heading=mapOpen?'КАРТА И СНАРЯЖЕНИЕ':'ПАУЗА';
         html=info(`${txt(HEROES[player.hero].name)} · ${txt(MODE_NAMES[run.mode])} · ${Math.ceil(player.hp)}/${player.maxHp} HP · ${txt('Глубина')} ${floorNum}`)+
-          add('▶ ПРОДОЛЖИТЬ',()=>pauseAction(0),{primary:true})+
+          (mapOpen?'<canvas id="mobile-map" width="600" height="300" aria-label="Карта открытых комнат"></canvas>'+info(player.relics.map(r=>txt(r.name)+' — '+txt(r.desc)).join('<br>')||'Реликвий пока нет'):'')+
+          add('▶ ПРОДОЛЖИТЬ',()=>{mapOpen=false;pauseAction(0);},{primary:true})+
           add(Snd.muted?'Включить звук':'Выключить звук',()=>pauseAction(1))+
           add(run.mode==='survival'?'Завершить выживание':'Покинуть спуск',()=>pauseAction(2));
         break;
@@ -276,12 +318,12 @@
       }
       case 'hatter': {
         heading='ШЛЯПНИК';const S=Hat.s;
-        html=S?info(txt(S.line)):'';
+        html=S?info(txt(S.line))+'<canvas id="mobile-hat-table" width="360" height="150" aria-label="Стол Шляпника"></canvas>':'';
         if(S){
           if(S.phase==='intro'||S.phase==='result'){
             if(!S.h.done)html+=add(`ИГРАТЬ ЗА ${S.h.fee} СЕРЕБРА`,hatterPlay,{primary:true,disabled:player.silver<S.h.fee});
             html+=add('УЙТИ',hatterLeave);
-          } else if(S.phase==='pick')html+=cards(S.hats.map((h,i)=>add('Шляпа '+(i+1),()=>hatterPick(h.slot),{card:true})));
+          } else if(S.phase==='pick')html+=cards([0,1,2].map(i=>add('Шляпа '+(i+1),()=>hatterPick(i),{card:true})));
           else html+=info('Следи за шляпами…');
         }
         break;
@@ -301,6 +343,7 @@
   }
   function buildMenu(force=false){
     if(state==='play')return;
+    if(!force&&document.activeElement&&document.activeElement.id==='mobile-seed-input')return;
     const sig=signature();if(!force&&sig===lastMenuSignature)return;
     lastMenuSignature=sig;
     const oldScroll=menuContent.scrollTop;
@@ -312,7 +355,7 @@
   }
   window.updateMobileUI=function updateMobileUI(){
     if(state==='play'){
-      if(lastMode!=='play'){playUI.hidden=false;menuUI.hidden=true;resetAll();lastStatus='';}
+      if(lastMode!=='play'){mapOpen=false;camera.reset();playUI.hidden=false;menuUI.hidden=true;resetAll();lastStatus='';}
       lastMode='play';presentWorld();return;
     }
     if(lastMode==='play'){resetAll();lastStatus='';}
@@ -320,9 +363,11 @@
     // Hatter / event screen phases can change as the game loop progresses.
     const now=Date.now();
     if(lastMode!==state||now-lastBuildAt>130){buildMenu(lastMode!==state);lastBuildAt=now;}
-    lastMode=state;
+    lastMode=state;renderMenuGraphics();
   };
   document.addEventListener('visibilitychange',()=>{if(document.hidden){resetAll();if(state==='play')handleKey('Escape');}});
+  window.addEventListener('blur',resetAll);
+  window.addEventListener('resize',()=>{resetAll();camera.reset();});
   window.addEventListener('pagehide',resetAll);
   window.updateMobileUI();
 })();

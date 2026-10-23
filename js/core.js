@@ -4,7 +4,7 @@
    Холст, константы, утилиты, ввод, сохранение, глобальное состояние
    ===================================================================== */
 const cvs = document.getElementById('game');
-const ctx = cvs.getContext('2d');
+let ctx = cvs.getContext('2d'); // Renderer target; mobile renders directly into its own viewport.
 
 // ===== ГЕОМЕТРИЯ КОМНАТЫ =====
 const HUD_H = 44;                 // высота верхней панели
