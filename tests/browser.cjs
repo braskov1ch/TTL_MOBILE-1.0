@@ -31,6 +31,23 @@ try{
  await page.evaluate(()=>{state='play';updateMobileUI();mobileInput.moveX=1;mobileInput.attack=true;window.dispatchEvent(new Event('blur'));});assert(await page.evaluate(()=>state==='pause'&&mobileInput.moveX===0&&!mobileInput.attack),'Background resets and pauses');
  for(const hero of await page.evaluate(()=>HERO_ORDER)){await page.evaluate(id=>{startRun(id);mobileInput.attack=true;mobileInput.skill=true;},hero);await page.waitForTimeout(70);await page.evaluate(()=>{mobileInput.attack=false;mobileInput.skill=false;});}
  assert.deepEqual(errors,[],'Browser runtime errors');
+ // Walk through real generated doors using analog input and collision handling.
+ for(const dir of ['u','d','l','r']){
+  const crossed=await page.evaluate(dir=>{
+   startRun('hunter');const d=DIRS.find(d=>d.name===dir);
+   const origin=[...grid.values()].find(r=>r.doors[dir]&&!r.doors[dir].hidden);
+   if(!origin)throw Error('Missing generated door '+dir);
+   enterRoomObj(origin,CX,CY);origin.cleared=true;origin.enemies=[];origin.waves=[];
+   const door=origin.doors[dir];door.locked=false;
+   player.x=d.dx<0?PLAY.x+player.r+30:d.dx>0?PLAY.x+PLAY.w-player.r-30:CX;
+   player.y=d.dy<0?PLAY.y+player.r+30:d.dy>0?PLAY.y+PLAY.h-player.r-30:CY;
+   clearTilesNear(origin,player.x,player.y,100);
+   mobileInput.active=true;mobileInput.moveX=d.dx;mobileInput.moveY=d.dy;mouse.active=false;
+   for(let i=0;i<120&&curRoom===origin;i++){updatePlayer(1/60);checkDoors();}
+   mobileInput.moveX=mobileInput.moveY=0;
+   return curRoom===grid.get(door.to);
+  },dir);assert(crossed,'Real room transition '+dir);
+ }
  // Desktop continues to use its original renderer.
  const desktop=await browser.newPage({viewport:{width:1280,height:720}});desktop.on('pageerror',e=>errors.push(e.message));await desktop.goto(url.replace('?touch=1',''));await desktop.evaluate(()=>{Save.data.prologue=true;cfg().story=false;startRun('hunter');});await desktop.waitForTimeout(150);assert.equal(await desktop.evaluate(()=>mobileInput.active),false);assert.deepEqual(errors,[]);
  console.log('Browser OK: 5 viewport sizes, real multi-touch, cancellation, map/pause, seed focus, 12 menus, event, Hatter, blur and desktop.');

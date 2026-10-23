@@ -23,6 +23,7 @@ function graphics(){
 }
 function canvas(){return {width:0,height:0,style:{},getContext:()=>graphics(),getBoundingClientRect:()=>({left:0,top:0,width:960,height:588}),addEventListener(){}};}
 const cases={
+ doors:fs.readFileSync(path.join(__dirname,'doors.js'),'utf8'),
  smoke:"Save.data.prologue=true;cfg().story=false;startRun('hunter');CIassert(state==='play','game start');for(let i=0;i<3;i++)updatePlayer(1/60);CIassert(player.hp>0,'player hp');",
  mechanics:"Save.data.prologue=true;cfg().story=false;startRun('hunter');const before=player.x;mobileInput.active=true;mobileInput.moveX=1;for(let i=0;i<7;i++)updatePlayer(1/60);CIassert(player.x>before,'player movement');",
  v2:"CIassert(Object.keys(HEROES).length===9,'heroes');CIassert(Object.keys(ENEMY_DEFS).length===25,'enemies');CIassert(Object.keys(BOSS_BY_ID).length===12,'bosses');",
@@ -44,7 +45,7 @@ function one(name){
  console.log(name+' OK');
 }
 const mode=process.argv[2]||'all';
-const selected=mode==='all'?['smoke','mechanics','v2','i18n','mobile']:mode==='assets'?[]:[mode];
+const selected=mode==='all'?['smoke','mechanics','v2','i18n','mobile','doors']:mode==='assets'?[]:[mode];
 if(selected.some(k=>!(k in cases))){console.error('Unknown suite '+mode);process.exit(2)}
 let failed=false;for(const name of selected){try{one(name)}catch(e){failed=true;console.error(name+' FAILED',e.stack||e)}}
 if(failed)process.exitCode=1;

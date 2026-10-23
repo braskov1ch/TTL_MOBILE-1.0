@@ -665,7 +665,10 @@ function checkDoors() {
     else if (d.name === 'd') touching = p.y >= PLAY.y + PLAY.h - p.r - 2 && Math.abs(p.x - CX) < half;
     else if (d.name === 'l') touching = p.x <= PLAY.x + p.r + 2 && Math.abs(p.y - CY) < half;
     else touching = p.x >= PLAY.x + PLAY.w - p.r - 2 && Math.abs(p.y - CY) < half;
-    const push = { u: keys.KeyW, d: keys.KeyS, l: keys.KeyA, r: keys.KeyD }[d.name];
+    // Door intent must include the same analog input that moves the hero.
+    const stickPush = mobileInput.active &&
+      mobileInput.moveX * d.dx + mobileInput.moveY * d.dy > 0.13;
+    const push = { u: keys.KeyW, d: keys.KeyS, l: keys.KeyA, r: keys.KeyD }[d.name] || stickPush;
     if (!touching || !rm.cleared || !push) continue;
     const target = grid.get(door.to);
     if (!target) continue;
