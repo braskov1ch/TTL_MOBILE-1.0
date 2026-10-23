@@ -1216,7 +1216,7 @@ function drawRoomDecor(rm) {
     ctx.strokeStyle = 'rgba(225,29,72,0.45)'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(CX, CY, 150, 0, 7); ctx.stroke();
     ctx.beginPath(); for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 4 / 5; const x = CX + Math.cos(a) * 150, y = CY + Math.sin(a) * 150; if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); } ctx.closePath(); ctx.stroke();
-  } else if (rm.type === 'start' && floorNum === 1) {
+  } else if (rm.type === 'start' && floorNum === 1 && !mobileInput.active) {
     ctx.save(); ctx.globalAlpha = 0.5;
     outlinedText('WASD — идти    ЛКМ — атака    ПКМ — умение', CX, CY - 78, '#cbd5e1', 14, 'center', FONT_SERIF);
     outlinedText('ПРОБЕЛ — рывок    Q — склянка    F — зелье    E — артефакт', CX, CY - 54, '#cbd5e1', 13, 'center', FONT_SERIF);

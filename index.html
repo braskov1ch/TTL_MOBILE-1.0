@@ -9,37 +9,37 @@
 </head>
 <body>
 <canvas id="game" aria-label="Игровое поле The Last Lantern"></canvas>
-<!-- Сенсорные элементы изолированы от Canvas, поэтому поддерживают несколько пальцев одновременно. -->
-<div id="mobile-controls" class="mobile-controls" aria-label="Сенсорное управление" hidden>
-  <div id="mobile-orientation" class="mobile-orientation" role="status">↻ Поверните устройство горизонтально — так удобнее играть</div>
-  <div id="mobile-play-ui" class="mobile-play-ui">
-    <div id="mobile-status" class="mobile-status" aria-live="off"></div>
-    <div class="mobile-stick" id="mobile-stick" role="group" aria-label="Джойстик движения">
-      <span class="stick-cross">✣</span><span class="stick-knob" id="mobile-stick-knob"></span>
-      <span class="touch-label">ДВИЖЕНИЕ</span>
+<!-- Отдельная мобильная композиция. ПК-Canvas остаётся источником графики игрового мира. -->
+<div id="mobile-controls" class="mobile-controls" hidden>
+  <section id="mobile-play-ui" class="mobile-play-ui" aria-label="Мобильная игра">
+    <header id="mobile-status" class="mobile-status" aria-label="Показатели героя"></header>
+    <div class="mobile-layout">
+      <aside class="mobile-rail mobile-rail-left" aria-label="Передвижение">
+        <div class="mobile-stick" id="mobile-stick" role="group" aria-label="Джойстик движения">
+          <span class="stick-cross">✣</span><span class="stick-knob" id="mobile-stick-knob"></span>
+        </div>
+        <span class="rail-caption">ДВИЖЕНИЕ</span>
+      </aside>
+      <div class="mobile-arena"><canvas id="mobile-view" aria-label="Игровой мир"></canvas></div>
+      <aside class="mobile-rail mobile-rail-right" aria-label="Действия">
+        <div class="mobile-action-grid">
+          <button id="mobile-attack" class="touch-button touch-attack" type="button" aria-label="Атака и прицеливание"><span class="attack-knob" id="mobile-attack-knob">⚔</span><small>АТАКА</small></button>
+          <button id="mobile-skill" class="touch-button touch-skill" type="button" aria-label="Умение героя">✦<small>УМЕНИЕ</small></button>
+          <button id="mobile-dash" class="touch-button touch-dash" type="button" aria-label="Рывок">➤<small>РЫВОК</small></button>
+          <button id="mobile-potion" class="touch-button touch-potion" type="button" aria-label="Выпить зелье">✚<small>ЗЕЛЬЕ</small></button>
+          <button id="mobile-flask" class="touch-button touch-flask" type="button" aria-label="Бросить склянку">⌁<small>СКЛЯНКА</small></button>
+          <button id="mobile-active" class="touch-button touch-active" type="button" aria-label="Применить артефакт">✧<small>АРТЕФАКТ</small></button>
+          <button id="mobile-pause" class="touch-button touch-pause" type="button" aria-label="Пауза">Ⅱ<small>ПАУЗА</small></button>
+        </div>
+      </aside>
     </div>
-    <button id="mobile-attack" class="touch-button touch-attack" type="button" aria-label="Атака и прицеливание">
-      <span class="attack-knob" id="mobile-attack-knob">⚔</span><span class="touch-label">АТАКА</span>
-    </button>
-    <button id="mobile-skill" class="touch-button touch-skill" type="button" aria-label="Умение героя">✦<span class="touch-label">УМЕНИЕ</span></button>
-    <button id="mobile-dash" class="touch-button touch-dash" type="button" aria-label="Рывок">➤<span class="touch-label">РЫВОК</span></button>
-    <button id="mobile-potion" class="touch-button touch-potion" type="button" aria-label="Выпить зелье">✚<span class="touch-label">ЗЕЛЬЕ</span></button>
-    <button id="mobile-flask" class="touch-button touch-flask" type="button" aria-label="Бросить склянку">⌁<span class="touch-label">СКЛЯНКА</span></button>
-    <button id="mobile-active" class="touch-button touch-active" type="button" aria-label="Применить артефакт">✧<span class="touch-label">АРТЕФАКТ</span></button>
-    <button id="mobile-pause" class="touch-button touch-pause" type="button" aria-label="Пауза">Ⅱ</button>
-  </div>
-  <div id="mobile-menu-ui" class="mobile-menu-ui" aria-label="Навигация по меню">
-    <button type="button" data-mobile-key="ArrowLeft" aria-label="Влево">◀</button>
-    <button type="button" data-mobile-key="ArrowUp" aria-label="Вверх">▲</button>
-    <button type="button" data-mobile-key="ArrowDown" aria-label="Вниз">▼</button>
-    <button type="button" data-mobile-key="ArrowRight" aria-label="Вправо">▶</button>
-    <button type="button" data-mobile-key="Enter" class="mobile-confirm">OK</button>
-    <button type="button" id="mobile-start" data-mobile-key="Space" hidden>▶</button>
-    <button type="button" data-mobile-key="Escape" aria-label="Назад">↩</button>
-  </div>
-  <div id="mobile-seed-ui" class="mobile-seed-ui">
-    <label for="mobile-seed-field">Код сида</label><input id="mobile-seed-field" type="text" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="Введите сид">
-  </div>
+  </section>
+  <section id="mobile-menu-ui" class="mobile-menu-ui" aria-label="Мобильное меню">
+    <div class="mobile-menu-shell">
+      <div class="mobile-menu-heading"><div><div class="mobile-brand">THE LAST LANTERN</div><h1 id="mobile-menu-title">ПОСЛЕДНИЙ ФОНАРЬ</h1></div><button id="mobile-back" type="button" aria-label="Вернуться назад">← НАЗАД</button></div>
+      <div id="mobile-menu-content" class="mobile-menu-content"></div>
+    </div>
+  </section>
 </div>
 <script src="js/core.js"></script>
 <script src="js/i18n.js"></script>

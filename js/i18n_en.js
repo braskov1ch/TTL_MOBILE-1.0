@@ -1261,3 +1261,63 @@ trPat("Играть за {} сер. (Enter)", "Play for {} silver (Enter)");
 trPat("{} заряжен", "{} charged");
 trPat("−{} жизни", "−{} health");
 trAdd({ "Новый герой": "New hero" });
+
+
+// Mobile-first interface translations (separate DOM screens).
+trAdd({
+  "В путь": "Into the Abyss",
+  "Летопись": "Records",
+  "Игра": "Game",
+  "Language: Русский → English": "Language: Russian → English",
+  "Language: English → Русский": "Language: English → Russian",
+  "Секретный герой": "Secret hero",
+  "Бремя: ": "Burden: ",
+  "Сид: ": "Seed: ",
+  "▶ СПУСТИТЬСЯ": "▶ DESCEND",
+  "▶ ПРОДОЛЖИТЬ": "▶ RESUME",
+  "Включить звук": "Enable sound",
+  "Выключить звук": "Mute sound",
+  "Завершить выживание": "Finish survival",
+  "ПОБЕДА": "VICTORY",
+  "В ЛАГЕРЬ": "TO CAMP",
+  "НАЧАТЬ СНОВА": "RESTART",
+  "ГЛАВНОЕ МЕНЮ": "MAIN MENU",
+  "ЗАБЕГ ПО СИДУ": "SEEDED RUN",
+  "СЛУЧАЙНЫЙ СИД": "RANDOM SEED",
+  "ПРОДОЛЖИТЬ": "CONTINUE",
+  "Береги масло фонаря. Во тьме тени становятся опаснее. На телефонах рекомендуется горизонтальная ориентация.": "Conserve lantern oil. Shadows grow more dangerous in darkness. Landscape mode is recommended on phones.",
+  "РЕЛИКВИИ": "RELICS",
+  "Не найдено": "Not found",
+  "ХРОНИКИ": "CHRONICLES",
+  "Не изучен": "Not discovered",
+  "Побеждено боссов": "Bosses defeated",
+  "Угли": "Embers",
+  "Монеты": "Coins",
+  "Волна выживания": "Survival wave",
+  "ИСТОРИЯ": "STORY",
+  "ДАЛЬШЕ": "NEXT",
+  "ПРОПУСТИТЬ": "SKIP",
+  "СОБЫТИЕ": "EVENT",
+  "ШЛЯПНИК": "HATTER",
+  "УЙТИ": "LEAVE",
+  "Шляпа ": "Hat ",
+  "Следи за шляпами…": "Watch the hats…",
+  "В ГЛАВНОЕ МЕНЮ": "MAIN MENU",
+  "ГЛ.": "DEPTH",
+  "<div class=\"mobile-tagline\">СПУСК В БЕЗДНУ</div>": "<div class=\"mobile-tagline\">DESCENT INTO THE ABYSS</div>",
+  "<div class=\"mobile-note\">Введи код генерации мира (до 12 символов).</div>": "<div class=\"mobile-note\">Enter a world seed (up to 12 characters).</div>",
+  "<b>Левый стик</b> — движение. <b>АТАКА</b> — удерживай для автоматического прицеливания, сдвигай палец для ручного.<div class=\"mobile-note\">✦ Умение · ➤ Рывок · ✚ Зелье · ⌁ Склянка · ✧ Артефакт.<br>Касайся игрового поля для точного прицеливания. Верхняя панель отображает здоровье и масло.</div>": "<b>Left stick</b> — move. <b>ATTACK</b> — hold for auto-aim; drag to aim manually.<div class=\"mobile-note\">✦ Skill · ➤ Dash · ✚ Potion · ⌁ Flask · ✧ Artifact.<br>Tap the arena to aim precisely. Health and oil are displayed at the top.</div>"
+});
+trPat("<span class=\"mobile-counter\">✚ {}</span><span class=\"mobile-counter\">⌁ {}</span><span class=\"mobile-counter\">ГЛ. {} · ➤ {}</span><button id=\"mobile-pause-top\" type=\"button\" aria-label=\"Пауза\">Ⅱ</button>", "<span class=\"mobile-counter\">✚ {}</span><span class=\"mobile-counter\">⌁ {}</span><span class=\"mobile-counter\">DEPTH {} · ➤ {}</span><button id=\"mobile-pause-top\" type=\"button\" aria-label=\"Pause\">Ⅱ</button>");
+trPat("Спусков: <b>{}</b> · Побед: <b>{}</b> · Углей: <b>{}</b> · Монет: <b>{}</b>", "Runs: <b>{}</b> · Wins: <b>{}</b> · Embers: <b>{}</b> · Coins: <b>{}</b>");
+trPat("Угли: <b>{}</b> · Монеты: <b>{}</b> · {}", "Embers: <b>{}</b> · Coins: <b>{}</b> · {}");
+trPat("{} · {} HP · {} урона", "{} · {} HP · {} damage");
+trPat("{} · {} мон. · запас {}/{}", "{} · {} coins · stock {}/{}");
+trPat("Герой: <b>{}</b> · {}: {}<div class=\"mobile-note\">Глубина: {} · Убийств: {} · Счёт: {} · +{} углей</div>", "Hero: <b>{}</b> · {}: {}<div class=\"mobile-note\">Depth: {} · Kills: {} · Score: {} · +{} embers</div>");
+trPat("<input class=\"mobile-input\" id=\"mobile-seed-input\" maxlength=\"12\" inputmode=\"text\" autocapitalize=\"characters\" placeholder=\"КОД СИДА\" value=\"{}\">", "<input class=\"mobile-input\" id=\"mobile-seed-input\" maxlength=\"12\" inputmode=\"text\" autocapitalize=\"characters\" placeholder=\"SEED\" value=\"{}\">");
+trPat("Открыто {} из {}", "Discovered {} of {}");
+trPat("Найдено {} из {}", "Found {} of {}");
+trPat("Узнано: {} / {}", "Discovered: {} / {}");
+trPat("ИГРАТЬ ЗА {} СЕРЕБРА", "PLAY FOR {} SILVER");
+
+trAdd({'Результат':'Result'});

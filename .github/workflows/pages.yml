@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '22'
       - name: Verify the game, assets and mobile input
-        run: npm test
+        run: npm test && node tests/mobile_ui_structure.js
       - name: Stage the static site
         run: |
           mkdir -p _site/js _site/css

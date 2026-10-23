@@ -1,81 +1,82 @@
-html, body {
-  margin: 0; padding: 0; height: 100%; overflow: hidden;
-  background: #050308; font-family: Georgia, 'Times New Roman', serif; user-select: none;
+/* The Last Lantern — Desktop + dedicated Mobile UI */
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#050308;color:#efe3c6;font-family:Georgia,'Times New Roman',serif;user-select:none}
+body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center,#130d20 0%,#030206 100%)}
+#game{display:block;background:#0a0710;border:2px solid #2a2236;border-radius:4px;box-shadow:0 0 60px #000f,0 0 30px #d6a23a12;flex-shrink:0}
+.mobile-controls[hidden],.mobile-play-ui[hidden],.mobile-menu-ui[hidden]{display:none!important}
+.mobile-controls{display:none}
+body.mobile-mode{height:100dvh;width:100dvw;overscroll-behavior:none;overflow:hidden;display:block;touch-action:none}
+body.mobile-mode #game{position:absolute!important;left:-10000px!important;top:-10000px!important;visibility:hidden!important;pointer-events:none!important;border:0;box-shadow:none}
+body.mobile-mode .mobile-controls{display:block;position:fixed;inset:0;z-index:10;overflow:hidden;color:#efdfbd;font-family:system-ui,-apple-system,Arial,sans-serif;background:#080610;touch-action:none;-webkit-tap-highlight-color:transparent}
+.mobile-controls button{touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;color:inherit;font-family:inherit}
+.mobile-play-ui{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0;background:#0b0810}
+.mobile-status{height:48px;flex-shrink:0;display:grid;grid-template-columns:minmax(90px,1.5fr) minmax(90px,1fr) auto auto auto;align-items:center;gap:clamp(4px,1vw,12px);padding:env(safe-area-inset-top) max(10px,env(safe-area-inset-right)) 3px max(10px,env(safe-area-inset-left));box-sizing:content-box;background:linear-gradient(#17131e,#0b0911);border-bottom:1px solid #81643b;font-size:12px;font-weight:700}
+.mobile-meter{min-width:0;display:flex;align-items:center;gap:6px}
+.mobile-meter-label{white-space:nowrap;font-size:11px;color:#dfd5c8}
+.mobile-meter-track{height:8px;min-width:20px;flex:1;border-radius:7px;background:#32272e;overflow:hidden;border:1px solid #483748}
+.mobile-meter-fill{height:100%;border-radius:6px;background:linear-gradient(#f98181,#981b29)}
+.mobile-meter-fill.oil{background:linear-gradient(#ffeca2,#d38317)}
+.mobile-counter{white-space:nowrap;font-variant-numeric:tabular-nums}
+.mobile-layout{flex:1;min-height:0;display:grid;grid-template-columns:clamp(94px,15vw,148px) minmax(0,1fr) clamp(155px,23vw,220px);grid-template-rows:minmax(0,1fr);overflow:hidden}
+.mobile-rail{min-width:0;min-height:0;background:linear-gradient(145deg,#1c1525,#0a0810);display:flex;align-items:center;justify-content:center;position:relative;padding:7px;box-sizing:border-box;touch-action:none}
+.mobile-rail-left{border-right:1px solid #56402c;flex-direction:column;gap:9px}
+.mobile-rail-right{border-left:1px solid #56402c}
+.mobile-arena{min-width:0;min-height:0;display:flex;justify-content:center;align-items:center;background:#030206;overflow:hidden;position:relative}
+#mobile-view{display:block;width:100%;height:100%;object-fit:fill;touch-action:none;image-rendering:auto}
+.mobile-stick{width:min(95%,125px);aspect-ratio:1;flex-shrink:0;position:relative;border:2px solid #6d5c50;background:radial-gradient(circle at center,#332e3c,#15101c);border-radius:50%;box-shadow:inset 0 0 23px #050206,0 0 12px #000b;touch-action:none}
+.mobile-stick .stick-cross{position:absolute;inset:0;display:grid;place-items:center;color:#766e86;font-size:52px;opacity:.42}
+.mobile-stick .stick-knob{position:absolute;left:50%;top:50%;width:41%;height:41%;border:2px solid #e1bd7a;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle at 30% 30%,#84705d,#201724);transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 2px 9px #000}
+.mobile-stick.is-held{border-color:#f9d495}
+.rail-caption{letter-spacing:.09em;font-weight:750;font-size:10px;color:#ad9679}
+.mobile-action-grid{width:100%;max-width:205px;max-height:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(42px,1fr));gap:clamp(3px,.7vw,9px);align-content:center}
+.mobile-controls .touch-button{position:relative;min-width:0;min-height:0;border:1px solid #7b6340;border-radius:14px;background:linear-gradient(145deg,#39303e,#16111c);box-shadow:inset 0 0 6px #0006;color:#f6dcaa;font-size:clamp(18px,2.5vw,25px);font-weight:700;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.mobile-controls .touch-button small{font-size:clamp(7px,1vw,10px);letter-spacing:.01em;color:#d7bd8e;white-space:nowrap}
+.mobile-controls .touch-button.is-held,.mobile-controls .touch-button:active{background:#593d30;border-color:#ffd393}
+.touch-attack{grid-column:2/4;grid-row:2/4;border-color:#f2bf63!important;background:radial-gradient(circle at 45% 30%,#5a3b30,#26151e)!important;border-radius:22px!important;font-size:30px!important}
+.touch-attack .attack-knob{pointer-events:none}
+.touch-skill{grid-column:2;grid-row:1}.touch-dash{grid-column:3;grid-row:1}.touch-potion{grid-column:1;grid-row:1}.touch-flask{grid-column:1;grid-row:2}.touch-active{grid-column:1;grid-row:3}.touch-pause{grid-column:3;grid-row:3;display:none!important}
+.mobile-menu-ui{position:absolute;inset:0;overflow:hidden;display:flex;justify-content:center;align-items:stretch;padding:max(8px,env(safe-area-inset-top)) max(9px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(9px,env(safe-area-inset-left));box-sizing:border-box;background:radial-gradient(ellipse at 50% 20%,#26182e,#08060d 74%)}
+.mobile-menu-shell{width:100%;max-width:830px;min-width:0;max-height:100%;display:flex;flex-direction:column;border:1px solid #685136;border-radius:18px;overflow:hidden;background:linear-gradient(140deg,#17121eec,#100b16f6);box-shadow:0 8px 40px #000a}
+.mobile-menu-heading{flex-shrink:0;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid #51402c;background:#1b1422}
+.mobile-brand{letter-spacing:.15em;color:#97816a;font-size:9px;font-weight:800}
+#mobile-menu-title{font:700 clamp(18px,4.3vw,26px) Georgia,serif;margin:4px 0 0;color:#ffdfa0;letter-spacing:.02em}
+#mobile-back{flex-shrink:0;border:1px solid #6e543b;background:#2b1d29;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:750;min-height:42px}
+.mobile-menu-content{min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px;display:flex;flex-direction:column;gap:10px;touch-action:pan-y}
+.mobile-tagline{font:italic 15px Georgia,serif;color:#b2a5c2;text-align:center}
+.mobile-section-title{font:700 16px Georgia,serif;color:#ddc28b;margin:8px 0 1px}
+.mobile-note{font-size:13px;line-height:1.5;color:#c3b6b7;white-space:pre-wrap}
+.mobile-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:9px;align-content:start}
+.mobile-cards.compact{grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr))}
+.mobile-menu-content button.mobile-card,.mobile-menu-content button.mobile-primary,.mobile-menu-content button.mobile-tab,.mobile-menu-content button.mobile-step{touch-action:manipulation;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:4px;border-radius:11px;border:1px solid #5c4a3f;background:#201927;padding:11px 13px;min-height:53px;box-sizing:border-box}
+.mobile-menu-content .mobile-card b{color:#f3dfb5;font-size:15px}.mobile-menu-content .mobile-card small{color:#b9a8a9;font-size:11px;line-height:1.4}.mobile-menu-content .mobile-card.selected{border-color:#f2c477;background:#382938}
+.mobile-menu-content button.mobile-primary{display:block;text-align:center;font-size:16px;font-weight:800;background:linear-gradient(#8f6433,#583618);border-color:#efc275;color:#fff4d9;min-height:53px}
+.mobile-menu-content button:disabled{opacity:.45;filter:grayscale(.3)}
+.mobile-tabs{display:flex;flex-wrap:wrap;gap:6px}.mobile-menu-content button.mobile-tab{min-height:42px;padding:10px;font-weight:700;display:block;flex:1;text-align:center}.mobile-menu-content button.mobile-tab.selected{background:#58402b;border-color:#ffce83}
+.mobile-row{display:flex;gap:7px;align-items:center;justify-content:space-between;border-bottom:1px solid #3e3345;padding:9px 0}.mobile-row b{color:#dbc598}.mobile-row span{color:#ddd2c3;font-size:13px}
+.mobile-menu-content .mobile-step{min-width:45px;min-height:42px!important;justify-content:center;align-items:center!important;display:inline-flex!important;padding:6px!important;text-align:center!important}
+.mobile-input{width:100%;box-sizing:border-box;padding:12px;background:#251a2c;border:1px solid #a17d47;border-radius:10px;color:#fff1d6;font:18px system-ui,sans-serif;min-height:48px}
+.mobile-info-panel{background:#120f1a;border:1px solid #503f33;border-radius:12px;padding:12px;color:#d9cbb8;line-height:1.5;font-size:13px}
+.mobile-info-panel b{color:#f7dea6}
+.mobile-filter{display:flex;gap:8px;align-items:center}
+.mobile-filter input{flex:1;min-width:0}
+@media(orientation:portrait){
+ .mobile-status{height:42px;grid-template-columns:1.5fr 1fr auto auto;font-size:10px;gap:5px}.mobile-status .mobile-counter:last-child{display:none}
+ .mobile-layout{grid-template-columns:43% 57%;grid-template-rows:minmax(0,1fr) clamp(176px,26dvh,252px)}
+ .mobile-arena{grid-column:1/3;grid-row:1}
+ .mobile-rail-left{grid-column:1;grid-row:2;border-right:1px solid #56402c;border-top:1px solid #56402c;gap:4px}
+ .mobile-rail-right{grid-column:2;grid-row:2;border-left:0;border-top:1px solid #56402c}
+ .mobile-stick{width:auto;height:min(76%,145px);max-width:95%}
+ .mobile-action-grid{height:100%;grid-template-rows:repeat(3,minmax(40px,1fr))}
+ .mobile-controls .touch-button{border-radius:11px;font-size:20px}.mobile-controls .touch-button small{font-size:8px}.touch-attack{font-size:28px!important;border-radius:15px!important}
+ .mobile-menu-heading{padding:12px}.mobile-menu-content{padding:12px}
 }
-body {
-  display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at center, #120c1c 0%, #030206 100%);
-}
-canvas {
-  background: #0a0710;
-  border: 2px solid #2a2236;
-  border-radius: 4px;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(214, 162, 58, 0.07);
+@media(orientation:landscape) and (max-height:410px){
+ .mobile-status{height:37px;font-size:10px}.mobile-status .mobile-meter-label{font-size:9px}
+ .mobile-action-grid{grid-template-rows:repeat(3,minmax(35px,1fr));gap:4px}
+ .mobile-controls .touch-button{border-radius:9px;font-size:18px}.mobile-controls .touch-button small{font-size:8px}
+ .mobile-rail{padding:4px}.mobile-stick{width:min(96%,105px)}.mobile-stick .stick-cross{font-size:39px}
+ .mobile-menu-heading{padding:6px 12px}.mobile-menu-content{padding:9px}
 }
 
-
-/* --- Mobile Edition: safe-area-aware, multi-touch controls --- */
-html, body { width: 100%; min-height: 100%; overscroll-behavior: none; }
-body { height: 100dvh; width: 100dvw; box-sizing: border-box; }
-#game { display: block; touch-action: none; max-width: none; flex-shrink: 0; }
-body.mobile-mode { overflow: hidden; }
-body.mobile-mode #game { border: 0; border-radius: 0; box-shadow: 0 0 18px #000; }
-body.mobile-portrait { justify-content: flex-start; align-items: center; flex-direction: column; padding-top: max(8px, env(safe-area-inset-top)); }
-.mobile-controls[hidden], .mobile-play-ui[hidden], .mobile-menu-ui[hidden], .mobile-seed-ui[hidden] { display: none !important; }
-.mobile-controls { position: fixed; inset: 0; z-index: 5; pointer-events: none; color: #f7e6b6; font-family: system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-.mobile-controls button { -webkit-appearance: none; appearance: none; font-family: system-ui, sans-serif; color: inherit; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
-.mobile-play-ui { position: absolute; inset: 0; pointer-events: none; }
-.mobile-controls .touch-button, .mobile-stick { position: absolute; box-sizing: border-box; display: grid; place-items: center; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none; border: 1.5px solid rgba(232,184,95,0.75); border-radius: 50%; background: radial-gradient(circle at 36% 26%, rgba(63,48,65,0.88), rgba(12,9,21,0.79)); box-shadow: 0 2px 17px rgba(0,0,0,.55), inset 0 0 18px rgba(214,162,58,.06); font-size: 24px; font-weight: 750; }
-.mobile-controls .touch-button:active, .mobile-controls .touch-button.is-held, .mobile-controls .mobile-stick.is-held { background: radial-gradient(circle at 35% 25%, rgba(115,74,48,.9), rgba(43,19,18,.88)); border-color: #ffe2a1; }
-.mobile-controls .touch-label { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-size: 9px; letter-spacing: 0.06em; color: #f1cd81; font-weight: 750; text-shadow: 0 1px 3px #000; pointer-events: none; }
-.mobile-stick { left: max(18px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); width: 132px; height: 132px; border-color: rgba(187,183,209,.6); }
-.mobile-stick .stick-cross { font-size: 54px; color: rgba(207,198,187,0.2); }
-.mobile-stick .stick-knob { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; box-sizing: border-box; border-radius: 50%; transform: translate(-50%,-50%); border: 2px solid rgba(241,219,155,.88); background: radial-gradient(circle at 30% 26%, #72635d, #1b1627); box-shadow: 0 3px 9px #0008; pointer-events: none; }
-.mobile-stick > .touch-label { bottom: -16px; }
-.touch-attack { right: max(18px, env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom)); width: 112px; height: 112px; border-width: 2px !important; border-color: #f2b652 !important; font-size: 36px !important; }
-.touch-attack .attack-knob { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%); pointer-events: none; }
-.touch-attack .touch-label { bottom: 13px; }
-.touch-skill { right: max(153px, calc(env(safe-area-inset-right) + 135px)); bottom: max(103px, calc(env(safe-area-inset-bottom) + 89px)); width: 64px; height: 64px; color: #d6b2ff !important; }
-.touch-dash { right: max(146px, calc(env(safe-area-inset-right) + 130px)); bottom: max(22px, env(safe-area-inset-bottom)); width: 64px; height: 64px; }
-.touch-potion { right: max(25px, calc(env(safe-area-inset-right) + 6px)); bottom: max(151px, calc(env(safe-area-inset-bottom) + 139px)); width: 55px; height: 55px; color: #fca5a5 !important; }
-.touch-flask { right: max(90px, calc(env(safe-area-inset-right) + 72px)); bottom: max(170px, calc(env(safe-area-inset-bottom) + 153px)); width: 52px; height: 52px; color: #fbbf83 !important; }
-.touch-active { right: max(151px, calc(env(safe-area-inset-right) + 133px)); bottom: max(183px, calc(env(safe-area-inset-bottom) + 166px)); width: 51px; height: 51px; color: #a5d6fc !important; }
-.touch-skill .touch-label, .touch-dash .touch-label, .touch-potion .touch-label, .touch-flask .touch-label, .touch-active .touch-label { bottom: -14px; font-size: 8px; }
-.touch-pause { top: max(48px, calc(env(safe-area-inset-top) + 30px)); right: max(10px, env(safe-area-inset-right)); width: 43px; height: 43px; border-radius: 12px !important; font-size: 19px !important; }
-.mobile-menu-ui { position: absolute; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(92vw, 510px); display: flex; align-items: center; justify-content: center; gap: min(1.5vw, 9px); pointer-events: auto; }
-.mobile-menu-ui button { background: rgba(25,18,35,.95); border: 1px solid #705c42; border-radius: 12px; min-width: 0; width: 14%; height: clamp(43px, 10dvh, 56px); flex: 1; font-size: 19px; box-shadow: 0 2px 12px #000b; }
-.mobile-menu-ui button:active { background: #70502e; }
-.mobile-menu-ui .mobile-confirm { background: #50381b; border-color: #c99b52; font-weight: 800; }
-.mobile-orientation { display: none; position: absolute; top: max(8px, env(safe-area-inset-top)); left: 0; right: 0; text-align: center; padding: 2px 8px; font-size: 11px; letter-spacing: .01em; color: #f4d8a0; text-shadow: 1px 1px 3px #000; }
-.mobile-seed-ui { position: absolute; left: 50%; transform: translateX(-50%); bottom: max(78px, calc(env(safe-area-inset-bottom) + 72px)); width: min(85vw, 320px); display: flex; align-items: center; gap: 10px; font-size: 14px; background: #0e0b17e8; padding: 8px; border: 1px solid #705c42; border-radius: 12px; pointer-events: auto; }
-.mobile-seed-ui input { flex: 1; min-width: 0; font: 16px system-ui, sans-serif; color: #fff4d7; background: #211827; border: 1px solid #6f572f; border-radius: 6px; padding: 8px; text-transform: uppercase; }
-body.mobile-portrait .mobile-orientation { display: block; }
-body.mobile-portrait #mobile-play-ui { bottom: 0; }
-body.mobile-portrait .mobile-stick { bottom: max(38px, calc(env(safe-area-inset-bottom) + 25px)); }
-body.mobile-portrait .touch-attack { bottom: max(42px, calc(env(safe-area-inset-bottom) + 28px)); }
-body.mobile-portrait .touch-skill { bottom: max(117px, calc(env(safe-area-inset-bottom) + 103px)); }
-body.mobile-portrait .touch-dash { bottom: max(26px, calc(env(safe-area-inset-bottom) + 17px)); }
-body.mobile-portrait .touch-potion { bottom: max(168px, calc(env(safe-area-inset-bottom) + 157px)); }
-body.mobile-portrait .touch-flask { bottom: max(185px, calc(env(safe-area-inset-bottom) + 173px)); }
-body.mobile-portrait .touch-active { bottom: max(198px, calc(env(safe-area-inset-bottom) + 184px)); }
-@media (max-height: 440px) and (orientation: landscape) {
-  .mobile-stick { width: 105px; height: 105px; bottom: max(20px, env(safe-area-inset-bottom)); }
-  .mobile-stick .stick-knob { width: 45px; height: 45px; }
-  .touch-attack { width: 94px; height: 94px; bottom: max(18px, env(safe-area-inset-bottom)); }
-  .touch-skill { right: 123px; bottom: 92px; width: 53px; height: 53px; }
-  .touch-dash { right: 119px; bottom: 18px; width: 53px; height: 53px; }
-  .touch-potion { bottom: 131px; width: 46px; height: 46px; }
-  .touch-flask { right: 78px; bottom: 145px; width: 46px; height: 46px; }
-  .touch-active { right: 136px; bottom: 153px; width: 43px; height: 43px; }
-  .mobile-controls .touch-label { font-size: 8px; }
-}
-@media (max-width: 370px) and (orientation: portrait) {
-  .mobile-stick { width: 116px; height: 116px; }
-  .touch-attack { width: 100px; height: 100px; }
-  .touch-skill { right: 121px; }
-  .touch-dash { right: 120px; }
-  .touch-active { right: 126px; }
-}
-
-.mobile-status { position: absolute; top: max(7px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap; text-align: center; padding: 7px 12px; border: 1px solid #82653c88; background: #100c18d9; border-radius: 10px; font-size: clamp(11px, 2.7vw, 14px); font-weight: 750; letter-spacing: .01em; text-shadow: 0 1px 3px #000; box-shadow: 0 3px 12px #0008; }
-body.mobile-portrait .mobile-status { top: max(31px, calc(env(safe-area-inset-top) + 25px)); }
+#mobile-pause-top{border:1px solid #7b6340;background:#2e2234;color:#f7dfad;border-radius:8px;font-weight:800;min-width:32px;min-height:30px;touch-action:manipulation}
+.mobile-status{grid-template-columns:minmax(90px,1.5fr) minmax(90px,1fr) auto auto auto 34px}
+@media(orientation:portrait){.mobile-status{grid-template-columns:1.5fr 1fr auto auto 34px}.mobile-status .mobile-counter:nth-last-child(2){display:none}}

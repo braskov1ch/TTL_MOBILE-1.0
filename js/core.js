@@ -48,17 +48,22 @@ function touchAvailable() {
 function fitCanvas() {
   const width = window.visualViewport ? window.visualViewport.width : window.innerWidth;
   const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  const portrait = touchAvailable() && height > width;
-  // В портретном режиме оставляем отдельную зону под джойстик и кнопки.
-  const controlsSpace = portrait ? Math.min(270, Math.max(195, height * 0.33)) : 0;
-  const pad = touchAvailable() ? 0 : 8;
-  const s = Math.max(0.1, Math.min((width - pad) / W, (height - controlsSpace - pad) / H, touchAvailable() ? 2 : 2));
-  cvs.style.width = Math.floor(W * s) + 'px';
-  cvs.style.height = Math.floor(H * s) + 'px';
-  cvs.style.marginTop = portrait ? Math.floor(Math.max(0, (height - controlsSpace - H * s) / 2)) + 'px' : '0px';
+  const touch = touchAvailable();
+  // В мобильном режиме основной Canvas только рендерит игровую сцену.
+  // Её видимая камера, HUD и управление находятся в отдельном UI.
+  if (touch) {
+    cvs.style.width = W + 'px';
+    cvs.style.height = H + 'px';
+    cvs.style.marginTop = '0';
+  } else {
+    const scale = Math.max(0.1, Math.min((width - 16) / W, (height - 16) / H, 2));
+    cvs.style.width = Math.floor(W * scale) + 'px';
+    cvs.style.height = Math.floor(H * scale) + 'px';
+    cvs.style.marginTop = '0';
+  }
   if (document.body && document.body.classList) {
-    document.body.classList.toggle('mobile-mode', touchAvailable());
-    document.body.classList.toggle('mobile-portrait', portrait);
+    document.body.classList.toggle('mobile-mode', touch);
+    document.body.classList.toggle('mobile-portrait', touch && height > width);
   }
 }
 window.addEventListener('resize', fitCanvas);
