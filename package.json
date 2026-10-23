@@ -1,7 +1,7 @@
 {
   "name": "last-lantern",
   "version": "2.0.0",
-  "description": "Последний Фонарь — тёмный фэнтези-рогалик в браузере (чистые JS + Canvas)",
+  "description": "The Last Lantern — Mobile Edition",
   "private": true,
   "scripts": {
     "test": "node tests/run.js all",
@@ -9,7 +9,8 @@
     "test:mechanics": "node tests/run.js mechanics",
     "test:v2": "node tests/run.js v2",
     "test:i18n": "node tests/run.js i18n",
-    "i18n:missing": "node tests/i18n_scan.js --missing",
+    "test:mobile": "node tests/run.js mobile",
+    "test:assets": "node tests/run.js assets",
     "balance": "node tests/run.js balance"
   }
 }
