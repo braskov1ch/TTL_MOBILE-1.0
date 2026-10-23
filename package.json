@@ -1,0 +1,15 @@
+{
+  "name": "last-lantern",
+  "version": "2.0.0",
+  "description": "Последний Фонарь — тёмный фэнтези-рогалик в браузере (чистые JS + Canvas)",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run.js all",
+    "test:smoke": "node tests/run.js smoke",
+    "test:mechanics": "node tests/run.js mechanics",
+    "test:v2": "node tests/run.js v2",
+    "test:i18n": "node tests/run.js i18n",
+    "i18n:missing": "node tests/i18n_scan.js --missing",
+    "balance": "node tests/run.js balance"
+  }
+}

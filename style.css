@@ -1,0 +1,81 @@
+html, body {
+  margin: 0; padding: 0; height: 100%; overflow: hidden;
+  background: #050308; font-family: Georgia, 'Times New Roman', serif; user-select: none;
+}
+body {
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at center, #120c1c 0%, #030206 100%);
+}
+canvas {
+  background: #0a0710;
+  border: 2px solid #2a2236;
+  border-radius: 4px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(214, 162, 58, 0.07);
+}
+
+
+/* --- Mobile Edition: safe-area-aware, multi-touch controls --- */
+html, body { width: 100%; min-height: 100%; overscroll-behavior: none; }
+body { height: 100dvh; width: 100dvw; box-sizing: border-box; }
+#game { display: block; touch-action: none; max-width: none; flex-shrink: 0; }
+body.mobile-mode { overflow: hidden; }
+body.mobile-mode #game { border: 0; border-radius: 0; box-shadow: 0 0 18px #000; }
+body.mobile-portrait { justify-content: flex-start; align-items: center; flex-direction: column; padding-top: max(8px, env(safe-area-inset-top)); }
+.mobile-controls[hidden], .mobile-play-ui[hidden], .mobile-menu-ui[hidden], .mobile-seed-ui[hidden] { display: none !important; }
+.mobile-controls { position: fixed; inset: 0; z-index: 5; pointer-events: none; color: #f7e6b6; font-family: system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+.mobile-controls button { -webkit-appearance: none; appearance: none; font-family: system-ui, sans-serif; color: inherit; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
+.mobile-play-ui { position: absolute; inset: 0; pointer-events: none; }
+.mobile-controls .touch-button, .mobile-stick { position: absolute; box-sizing: border-box; display: grid; place-items: center; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none; border: 1.5px solid rgba(232,184,95,0.75); border-radius: 50%; background: radial-gradient(circle at 36% 26%, rgba(63,48,65,0.88), rgba(12,9,21,0.79)); box-shadow: 0 2px 17px rgba(0,0,0,.55), inset 0 0 18px rgba(214,162,58,.06); font-size: 24px; font-weight: 750; }
+.mobile-controls .touch-button:active, .mobile-controls .touch-button.is-held, .mobile-controls .mobile-stick.is-held { background: radial-gradient(circle at 35% 25%, rgba(115,74,48,.9), rgba(43,19,18,.88)); border-color: #ffe2a1; }
+.mobile-controls .touch-label { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-size: 9px; letter-spacing: 0.06em; color: #f1cd81; font-weight: 750; text-shadow: 0 1px 3px #000; pointer-events: none; }
+.mobile-stick { left: max(18px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); width: 132px; height: 132px; border-color: rgba(187,183,209,.6); }
+.mobile-stick .stick-cross { font-size: 54px; color: rgba(207,198,187,0.2); }
+.mobile-stick .stick-knob { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; box-sizing: border-box; border-radius: 50%; transform: translate(-50%,-50%); border: 2px solid rgba(241,219,155,.88); background: radial-gradient(circle at 30% 26%, #72635d, #1b1627); box-shadow: 0 3px 9px #0008; pointer-events: none; }
+.mobile-stick > .touch-label { bottom: -16px; }
+.touch-attack { right: max(18px, env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom)); width: 112px; height: 112px; border-width: 2px !important; border-color: #f2b652 !important; font-size: 36px !important; }
+.touch-attack .attack-knob { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%); pointer-events: none; }
+.touch-attack .touch-label { bottom: 13px; }
+.touch-skill { right: max(153px, calc(env(safe-area-inset-right) + 135px)); bottom: max(103px, calc(env(safe-area-inset-bottom) + 89px)); width: 64px; height: 64px; color: #d6b2ff !important; }
+.touch-dash { right: max(146px, calc(env(safe-area-inset-right) + 130px)); bottom: max(22px, env(safe-area-inset-bottom)); width: 64px; height: 64px; }
+.touch-potion { right: max(25px, calc(env(safe-area-inset-right) + 6px)); bottom: max(151px, calc(env(safe-area-inset-bottom) + 139px)); width: 55px; height: 55px; color: #fca5a5 !important; }
+.touch-flask { right: max(90px, calc(env(safe-area-inset-right) + 72px)); bottom: max(170px, calc(env(safe-area-inset-bottom) + 153px)); width: 52px; height: 52px; color: #fbbf83 !important; }
+.touch-active { right: max(151px, calc(env(safe-area-inset-right) + 133px)); bottom: max(183px, calc(env(safe-area-inset-bottom) + 166px)); width: 51px; height: 51px; color: #a5d6fc !important; }
+.touch-skill .touch-label, .touch-dash .touch-label, .touch-potion .touch-label, .touch-flask .touch-label, .touch-active .touch-label { bottom: -14px; font-size: 8px; }
+.touch-pause { top: max(48px, calc(env(safe-area-inset-top) + 30px)); right: max(10px, env(safe-area-inset-right)); width: 43px; height: 43px; border-radius: 12px !important; font-size: 19px !important; }
+.mobile-menu-ui { position: absolute; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(92vw, 510px); display: flex; align-items: center; justify-content: center; gap: min(1.5vw, 9px); pointer-events: auto; }
+.mobile-menu-ui button { background: rgba(25,18,35,.95); border: 1px solid #705c42; border-radius: 12px; min-width: 0; width: 14%; height: clamp(43px, 10dvh, 56px); flex: 1; font-size: 19px; box-shadow: 0 2px 12px #000b; }
+.mobile-menu-ui button:active { background: #70502e; }
+.mobile-menu-ui .mobile-confirm { background: #50381b; border-color: #c99b52; font-weight: 800; }
+.mobile-orientation { display: none; position: absolute; top: max(8px, env(safe-area-inset-top)); left: 0; right: 0; text-align: center; padding: 2px 8px; font-size: 11px; letter-spacing: .01em; color: #f4d8a0; text-shadow: 1px 1px 3px #000; }
+.mobile-seed-ui { position: absolute; left: 50%; transform: translateX(-50%); bottom: max(78px, calc(env(safe-area-inset-bottom) + 72px)); width: min(85vw, 320px); display: flex; align-items: center; gap: 10px; font-size: 14px; background: #0e0b17e8; padding: 8px; border: 1px solid #705c42; border-radius: 12px; pointer-events: auto; }
+.mobile-seed-ui input { flex: 1; min-width: 0; font: 16px system-ui, sans-serif; color: #fff4d7; background: #211827; border: 1px solid #6f572f; border-radius: 6px; padding: 8px; text-transform: uppercase; }
+body.mobile-portrait .mobile-orientation { display: block; }
+body.mobile-portrait #mobile-play-ui { bottom: 0; }
+body.mobile-portrait .mobile-stick { bottom: max(38px, calc(env(safe-area-inset-bottom) + 25px)); }
+body.mobile-portrait .touch-attack { bottom: max(42px, calc(env(safe-area-inset-bottom) + 28px)); }
+body.mobile-portrait .touch-skill { bottom: max(117px, calc(env(safe-area-inset-bottom) + 103px)); }
+body.mobile-portrait .touch-dash { bottom: max(26px, calc(env(safe-area-inset-bottom) + 17px)); }
+body.mobile-portrait .touch-potion { bottom: max(168px, calc(env(safe-area-inset-bottom) + 157px)); }
+body.mobile-portrait .touch-flask { bottom: max(185px, calc(env(safe-area-inset-bottom) + 173px)); }
+body.mobile-portrait .touch-active { bottom: max(198px, calc(env(safe-area-inset-bottom) + 184px)); }
+@media (max-height: 440px) and (orientation: landscape) {
+  .mobile-stick { width: 105px; height: 105px; bottom: max(20px, env(safe-area-inset-bottom)); }
+  .mobile-stick .stick-knob { width: 45px; height: 45px; }
+  .touch-attack { width: 94px; height: 94px; bottom: max(18px, env(safe-area-inset-bottom)); }
+  .touch-skill { right: 123px; bottom: 92px; width: 53px; height: 53px; }
+  .touch-dash { right: 119px; bottom: 18px; width: 53px; height: 53px; }
+  .touch-potion { bottom: 131px; width: 46px; height: 46px; }
+  .touch-flask { right: 78px; bottom: 145px; width: 46px; height: 46px; }
+  .touch-active { right: 136px; bottom: 153px; width: 43px; height: 43px; }
+  .mobile-controls .touch-label { font-size: 8px; }
+}
+@media (max-width: 370px) and (orientation: portrait) {
+  .mobile-stick { width: 116px; height: 116px; }
+  .touch-attack { width: 100px; height: 100px; }
+  .touch-skill { right: 121px; }
+  .touch-dash { right: 120px; }
+  .touch-active { right: 126px; }
+}
+
+.mobile-status { position: absolute; top: max(7px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap; text-align: center; padding: 7px 12px; border: 1px solid #82653c88; background: #100c18d9; border-radius: 10px; font-size: clamp(11px, 2.7vw, 14px); font-weight: 750; letter-spacing: .01em; text-shadow: 0 1px 3px #000; box-shadow: 0 3px 12px #0008; }
+body.mobile-portrait .mobile-status { top: max(31px, calc(env(safe-area-inset-top) + 25px)); }
